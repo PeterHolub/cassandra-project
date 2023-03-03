@@ -1,0 +1,53 @@
+version: "3.9"
+
+services:
+  cassandra-db-0:
+    container_name: cassandra-db-0
+    profiles: [ "cassandra" ]
+    image: cassandra:latest
+    networks:
+      - cassandra-local-network
+    ports:
+      - "9042:9042"
+    volumes:
+      - "/tmp/cassandra_data_0:/var/lib/cassandra"
+    environment: &environment
+      - "CASSANDRA_SEEDS=cassandra-db-0"
+      - "CASSANDRA_CLUSTER_NAME=First Cassandra Cluster"
+      - "CASSANDRA_DC=datacenter1"
+      - "CASSANDRA_ENDPOINT_SNITCH=GossipingPropertyFileSnitch"
+
+  cassandra-db-1:
+    container_name: cassandra-db-1
+    profiles: [ "cassandra" ]
+    image: cassandra:latest
+    networks:
+      - cassandra-local-network
+    ports:
+      - "9043:9042"
+    volumes:
+      - "/tmp/cassandra_data_1:/var/lib/cassandra"
+    environment: *environment
+    depends_on:
+      - cassandra-db-0
+
+  postgres-db:
+    container_name: postgres-db
+    profiles: [ "postgres" ]
+    image: "postgres"
+    volumes:
+      - postgres-db:/data/postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      PGDATA: /data/postgres
+
+networks:
+  cassandra-local-network:
+    name: cassandra-local-network
+
+volumes:
+  postgres-db:
+    driver: local
