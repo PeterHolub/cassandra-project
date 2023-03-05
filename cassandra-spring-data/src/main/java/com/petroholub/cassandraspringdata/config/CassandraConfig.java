@@ -10,6 +10,11 @@ import java.util.List;
 @Configuration
 public class CassandraConfig extends AbstractCassandraConfiguration {
     private static final String KEY_SPACE_NAME = "localkeyspacespring";
+    private static final String CONTACT_POINTS = "127.0.0.1";
+
+    private static final String LOCAL_DATACENTER = "datacenter1";
+
+    private static final Integer PORT = 9042;
 
     @Override
     protected String getKeyspaceName() {
@@ -23,6 +28,21 @@ public class CassandraConfig extends AbstractCassandraConfiguration {
                         .withSimpleReplication(2)
                         .ifNotExists()
         );
+    }
+
+    @Override
+    protected String getContactPoints() {
+        return CONTACT_POINTS;
+    }
+
+    @Override
+    protected int getPort() {
+        return PORT;
+    }
+
+    @Override
+    protected String getLocalDataCenter() {
+        return LOCAL_DATACENTER;
     }
 
     @Override
